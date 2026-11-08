@@ -1,0 +1,28 @@
+# OpenTofu: providers and LOCAL STATE (state may contain sensitive values and is never committed)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+*.tfplan
+tfplan
+# The provider lock files ARE committed (.terraform.lock.hcl)
+
+# Nix
+.direnv/
+result
+
+# Claude
+.claude/settings.local.json
+.claude/worktrees/
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+.pre-commit-config.yaml

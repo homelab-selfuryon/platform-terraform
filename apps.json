@@ -1,0 +1,16 @@
+{
+  "notes-api": {
+    "team": "notes",
+    "description": "Example app: notes REST API on Postgres",
+    "tier": "tier-3",
+    "lifecycle": "active",
+    "envs": ["preview", "staging", "prod"]
+  },
+  "notes-stats": {
+    "team": "notes",
+    "description": "Example app: calls notes-api with a projected ServiceAccount token",
+    "tier": "tier-3",
+    "lifecycle": "active",
+    "envs": ["preview", "staging", "prod"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "platform": {
+    "description": "Platform team: clusters, platform components, paved road, org configuration",
+    "permission": "admin"
+  },
+  "notes": {
+    "description": "Product team behind the example apps notes-api and notes-stats",
+    "permission": "maintain"
+  }
+}
