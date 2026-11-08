@@ -69,21 +69,22 @@ variable "allowed_action_patterns" {
   default = [
     # The org's own actions and reusable workflows.
     "homelab-selfuryon/*",
-    # Build and tooling.
-    "cue-lang/setup-cue@*",
+    # Nix and devenv on the runner.
+    "cachix/install-nix-action@*",
+    "cachix/cachix-action@*",
     "nixbuild/nix-quick-install-action@*",
+    # Images and artifacts.
+    "docker/setup-buildx-action@*",
+    "docker/build-push-action@*",
+    "docker/login-action@*",
     "oras-project/setup-oras@*",
     # Supply chain.
     "sigstore/cosign-installer@*",
-    "sigstore/*",
     "octo-sts/action@*",
     # Release and automation.
     "googleapis/release-please-action@*",
     "peter-evans/create-pull-request@*",
     "int128/diff-action@*",
     "int128/comment-action@*",
-    # Policy tooling.
-    "kyverno/action-install-cli@*",
-    "azure/setup-helm@*",
   ]
 }
