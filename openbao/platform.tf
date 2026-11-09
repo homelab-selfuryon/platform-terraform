@@ -3,14 +3,17 @@
 data "vault_policy_document" "platform" {
   for_each = local.platform_roles
 
+  # The component's secret is the path itself (kv/data/platform/<cluster>/<component>, key
+  # `api-token`: the contract in meta/delivery.md and platform-components' SecretProviderClass),
+  # not something below it.
   rule {
-    path         = "kv/data/${each.value.path}/*"
+    path         = "kv/data/${each.value.path}"
     capabilities = ["read"]
   }
 
   rule {
-    path         = "kv/metadata/${each.value.path}/*"
-    capabilities = ["read", "list"]
+    path         = "kv/metadata/${each.value.path}"
+    capabilities = ["read"]
   }
 }
 
