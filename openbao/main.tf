@@ -22,13 +22,5 @@ resource "vault_kubernetes_auth_backend_config" "this" {
   disable_local_ca_jwt = false # use the pod's own CA and token for TokenReview
 }
 
-# Audit log to stdout (collected from the pod's log stream).
-resource "vault_audit" "stdout" {
-  type        = "file"
-  path        = "stdout"
-  description = "Audit log to the container's stdout"
-
-  options = {
-    file_path = "stdout"
-  }
-}
+# No audit device here: OpenBao enables audit devices only from its server configuration (the `audit`
+# stanza in platform-components, components/security/openbao), not through the API.

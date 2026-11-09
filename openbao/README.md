@@ -1,6 +1,6 @@
 # openbao/
 
-OpenBao configuration as code: Kubernetes auth, the `kv/` mount, the audit device, and one policy +
+OpenBao configuration as code: Kubernetes auth, the `kv/` mount, and one policy +
 role per app x environment and per platform component.
 
 ## Provider choice
@@ -17,7 +17,7 @@ Sentinel) must not be used; `namespace` is left unset.
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | KV v2 mount             | `kv/` (`kv/<team>/<env>/<app>/<key>`, `kv/platform/<cluster>/<component>/<key>`)                                                                                                                                                                                                                                            |
 | Auth mount              | `kubernetes`; config uses the pod's own CA and ServiceAccount token for TokenReview (OpenBao runs in the cluster, `kubernetes_host = https://kubernetes.default.svc`)                                                                                                                                                       |
-| Audit device            | `file`, `file_path = stdout`                                                                                                                                                                                                                                                                                                |
+| Audit device            | none here: OpenBao enables audit devices only from its server config (`audit "file" "stdout"` in platform-components)                                                                                                                                                                                                       |
 | App roles/policies      | `<team>-<env>-<app>` for notes-api and notes-stats x `preview`, `staging`, `prod`; the policy reads `kv/data/<team>/<env>/<app>/*` (+ metadata) only                                                                                                                                                                        |
 | Platform roles/policies | `platform-alpha-01-cert-manager` (SA `secret-sync` in `cert-manager-system`), `platform-alpha-01-external-dns` (SA `external-dns` in `external-dns-system`); policy reads `kv/data/platform/alpha-01/<component>` (the path itself, key `api-token`). Names and ServiceAccounts: variables `cluster`, `platform_components` |
 
@@ -27,8 +27,9 @@ Service roles bind the ServiceAccount **named like the service** to the namespac
 
 OpenBao's Kubernetes auth supports only exact namespace names or `*`; there is **no glob** such as
 `notes-pr-*`. It does support `bound_service_account_namespace_selector`, a Kubernetes label selector.
-The `preview` roles therefore use the selector
-`homelab-selfuryon.github.io/team=<team>,homelab-selfuryon.github.io/env=preview` instead of a name.
+The `preview` roles therefore select on the labels `homelab-selfuryon.github.io/team=<team>` and
+`homelab-selfuryon.github.io/env=preview` instead of a name, written as a LabelSelector in JSON
+(`{"matchLabels": {...}}`; OpenBao rejects the `k=v,k=v` string form).
 Requirements on the cluster side (to be provided by `platform-components`):
 
 1. The Argo-created preview namespaces `<team>-pr-<n>` carry the labels `homelab-selfuryon.github.io/team=<team>`
@@ -64,7 +65,7 @@ import with `tofu import vault_mount.kv kv`, `vault_auth_backend.kubernetes kube
 `vault_kubernetes_auth_backend_config.this auth/kubernetes/config`,
 `'vault_policy.app["<role>"]' <role>`,
 `'vault_kubernetes_auth_backend_role.app["<role>"]' auth/kubernetes/role/<role>` (same for
-`platform`), `vault_audit.stdout stdout`.
+`platform`).
 
 ## Adding an app
 
