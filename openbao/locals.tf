@@ -22,10 +22,13 @@ locals {
         # and disappear per pull request, so they are selected by label (OpenBao has no glob on
         # namespace names).
         namespaces = env == "preview" ? null : ["${s.team}-${env}"]
-        selector = env == "preview" ? join(",", [
-          "${var.label_prefix}team=${s.team}",
-          "${var.label_prefix}env=preview",
-        ]) : null
+        # A Kubernetes LabelSelector as JSON (the `k=v,k=v` string form is rejected).
+        selector = env == "preview" ? jsonencode({
+          matchLabels = {
+            "${var.label_prefix}team" = s.team
+            "${var.label_prefix}env"  = "preview"
+          }
+        }) : null
       }
     }
   ]...)
