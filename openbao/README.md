@@ -17,6 +17,7 @@ Sentinel) must not be used; `namespace` is left unset.
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | KV v2 mount             | `kv/` (`kv/<team>/<env>/<app>/<key>`, `kv/platform/<cluster>/<component>/<key>`)                                                                                                                                                                                                                                            |
 | Auth mount              | `kubernetes`; config uses the pod's own CA and ServiceAccount token for TokenReview (OpenBao runs in the cluster, `kubernetes_host = https://kubernetes.default.svc`)                                                                                                                                                       |
+| Admin                   | policy `admin` + token role `admin` (orphan, periodic 30 days): the owner's token for applies and `bao kv put`; no seal, rekey, generate-root, raw or audit rights                                                                                                                                                          |
 | Audit device            | none here: OpenBao enables audit devices only from its server config (`audit "file" "stdout"` in platform-components)                                                                                                                                                                                                       |
 | App roles/policies      | `<team>-<env>-<app>` for notes-api and notes-stats x `preview`, `staging`, `prod`; the policy reads `kv/data/<team>/<env>/<app>/*` (+ metadata) only                                                                                                                                                                        |
 | Platform roles/policies | `platform-alpha-01-cert-manager` (SA `secret-sync` in `cert-manager-system`), `platform-alpha-01-external-dns` (SA `external-dns` in `external-dns-system`); policy reads `kv/data/platform/alpha-01/<component>` (the path itself, key `api-token`). Names and ServiceAccounts: variables `cluster`, `platform_components` |
@@ -49,14 +50,26 @@ up and OpenBao is initialised and unsealed (bootstrap step 4, `meta/delivery.md`
 ```sh
 cd platform-terraform/openbao
 export VAULT_ADDR=https://<private address of OpenBao>   # the provider reads VAULT_*, the bao CLI BAO_*
-export VAULT_TOKEN=<token>                                 # root token for the first apply, then revoke it
+export VAULT_TOKEN=<token>                                 # the admin token; the root token only for the first apply
 tofu init
 tofu plan -out=tfplan
 tofu apply tfplan
 ```
 
-The first apply needs the initial root token (it creates the mounts, auth method and policies).
-After it, create an admin policy and token for later applies and revoke the root token.
+The first apply needs the initial root token (it creates the mounts, auth method and policies, and
+the `admin` policy and token role). Then switch to an admin token and revoke the root token:
+
+```sh
+umask 077
+VAULT_TOKEN=<root token> bao token create -role=admin -display-name=owner -field=token > <bundle>/admin-token
+VAULT_TOKEN=$(cat <bundle>/admin-token) tofu plan     # empty: the admin token can manage everything here
+VAULT_TOKEN=<root token> bao token revoke -self
+```
+
+The admin token is periodic: each use within 30 days may renew it (`bao token renew`), unused for
+longer it expires. Rotate it with `bao token create -role=admin` from the current one, then revoke the
+old one. When no admin token is left: `bao operator generate-root` with the recovery keys, create a
+new admin token, revoke that root token.
 
 Check: `bao read auth/kubernetes/role/notes-prod-notes-api`.
 
