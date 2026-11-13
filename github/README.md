@@ -14,6 +14,7 @@ The GitHub organization `homelab-selfuryon` as code: `integrations/github` provi
 | `environments.tf`              | Environments `staging` and `prod` on `notes-api` and `notes-stats`, deployment policy: custom tag pattern `v*`, no reviewers                                                                                             |
 | `rulesets.tf`                  | Per repository: `default-branch` (PR, code-owner review, 0 extra approvals, signed commits, linear history, no force-push or deletion, required check `final-check`) and `release-tags` (`v*` can't be moved or deleted) |
 | `actions.tf`                   | Org Actions policy: GitHub-owned + allowlist, SHA pinning required, read-only `GITHUB_TOKEN`, Actions can't approve PRs                                                                                                  |
+| `labels.tf`                    | Label `preview` (preview environment for a pull request) on the app repositories and the template                                                                                                                        |
 | `imports.tf`                   | `import {}` for the org settings, the 10 repositories and their vulnerability alerts                                                                                                                                     |
 
 Teams, custom properties, environments, rulesets and the Actions policy did not exist when this was
