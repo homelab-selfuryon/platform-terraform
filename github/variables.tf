@@ -73,8 +73,6 @@ variable "allowed_action_patterns" {
     "cachix/install-nix-action@*",
     "cachix/cachix-action@*",
     "nixbuild/nix-quick-install-action@*",
-    # The devenv shell's Nix store in the Actions cache (saved from main only).
-    "nix-community/cache-nix-action@*",
     # Images and artifacts.
     "docker/setup-buildx-action@*",
     "docker/build-push-action@*",
