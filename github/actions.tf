@@ -1,5 +1,6 @@
 # Actions policy for the whole organization: GitHub's own actions plus an explicit allowlist, every
-# action pinned by commit SHA, read-only default token, Actions cannot approve pull requests.
+# action pinned by commit SHA, read-only default token, Actions cannot approve pull requests. The same
+# switch keeps GITHUB_TOKEN from creating pull requests: bots open them with octo-sts tokens.
 resource "github_actions_organization_permissions" "this" {
   enabled_repositories = "all"
   allowed_actions      = "selected"
