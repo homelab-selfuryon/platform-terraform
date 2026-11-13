@@ -10,6 +10,8 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 *.tfvars
+# Committed on purpose: non-secret settings of this organization (see the file).
+!homelab.auto.tfvars
 *.tfvars.json
 *.tfplan
 tfplan
