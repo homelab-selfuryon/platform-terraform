@@ -92,14 +92,20 @@ push the initial commit of every repository **before** the first apply, or apply
 `TF_VAR_ruleset_enforcement=disabled`, push, and apply again without it (`evaluate` logs violations
 without blocking).
 
-### Solo maintainer
+### Solo maintainer (an exception of this homelab)
 
-The code-owner review is required and the PR author can't approve their own pull request, so with one
-maintainer nothing could be merged. `ruleset_admin_bypass` (default `true`) lets repository admins
-bypass the default-branch ruleset **through a pull request only**; direct pushes stay blocked, and a
-bypass shows in the audit log. Set it to `false` when a second maintainer exists (see
-`meta/decisions.md`, Open: solo maintainer). The same applies to Renovate automerge: its pull requests
-wait for a platform review unless the Renovate app is listed in `ruleset_bypass_integrations`.
+GitHub never lets the author of a pull request approve it, so with one maintainer a required
+code-owner review can only be met by bypassing the ruleset. This organization therefore sets
+`solo_maintainer = true` in the committed `homelab.auto.tfvars`: the default-branch ruleset requires
+no review. Everything else stays: changes only through pull requests, signed commits, linear history,
+the required check `final-check`, resolved review threads; no admin bypass
+(`ruleset_admin_bypass = false`), so the checks bind the maintainer too. Renovate's automerge works
+again without a bypass for its app: it still waits for the required checks.
+
+**A real organization does not copy this.** It keeps the defaults (`solo_maintainer = false`,
+`ruleset_admin_bypass = false`): every change is approved by a code owner other than its author.
+Delete `homelab.auto.tfvars` (or set both to false) as soon as there is a second maintainer
+(`meta/decisions.md`, 2026-11-13).
 
 ### Required check `final-check`
 
@@ -116,15 +122,16 @@ property `<name>`; Actions permissions `homelab-selfuryon`) or delete them in th
 
 ## Variables
 
-| Variable                                            | Default             | Meaning                                                |
-| --------------------------------------------------- | ------------------- | ------------------------------------------------------ |
-| `billing_email`                                     | required, sensitive | Org billing e-mail (`TF_VAR_billing_email`)            |
-| `ruleset_enforcement`                               | `active`            | `active`, `evaluate`, `disabled`                       |
-| `ruleset_admin_bypass`                              | `true`              | Admin bypass through a pull request (solo maintainer)  |
-| `ruleset_bypass_integrations`                       | `{}`                | GitHub App name => ID that may bypass via pull request |
-| `required_status_checks`, `default_required_checks` | `["final-check"]`   | Required checks per repository                         |
-| `allowed_action_patterns`                           | see `variables.tf`  | Third-party actions allowed by the org policy          |
-| `maintainer`                                        | `selfuryon`         | Maintainer of both teams                               |
+| Variable                                            | Default             | Meaning                                                    |
+| --------------------------------------------------- | ------------------- | ---------------------------------------------------------- |
+| `billing_email`                                     | required, sensitive | Org billing e-mail (`TF_VAR_billing_email`)                |
+| `ruleset_enforcement`                               | `active`            | `active`, `evaluate`, `disabled`                           |
+| `solo_maintainer`                                   | `false`             | No required review (this org: `true`, homelab.auto.tfvars) |
+| `ruleset_admin_bypass`                              | `false`             | Admin bypass through a pull request (emergency only)       |
+| `ruleset_bypass_integrations`                       | `{}`                | GitHub App name => ID that may bypass via pull request     |
+| `required_status_checks`, `default_required_checks` | `["final-check"]`   | Required checks per repository                             |
+| `allowed_action_patterns`                           | see `variables.tf`  | Third-party actions allowed by the org policy              |
+| `maintainer`                                        | `selfuryon`         | Maintainer of both teams                                   |
 
 ## Catalog: adding an app or a team
 

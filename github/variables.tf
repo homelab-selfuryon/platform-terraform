@@ -27,15 +27,26 @@ variable "ruleset_enforcement" {
   }
 }
 
+variable "solo_maintainer" {
+  description = <<-EOT
+    The organization has a single maintainer. GitHub never lets the author approve their own pull
+    request, so a required code-owner review could only be met by bypassing the ruleset. true: the
+    default-branch ruleset requires no review (pull request, signed commits, linear history, required
+    checks and resolved threads stay). An exception for this homelab (homelab.auto.tfvars); a real
+    organization keeps false: every change is approved by a code owner other than its author.
+  EOT
+  type        = bool
+  default     = false
+}
+
 variable "ruleset_admin_bypass" {
   description = <<-EOT
     Let repository admins bypass the default-branch ruleset **through a pull request only** (never a
-    direct push). With one maintainer this is what makes merging possible: the code-owner review is
-    required and the author cannot approve their own pull request. Set to false once a second
-    maintainer exists.
+    direct push); a bypass skips the required checks too. Off by default and in this organization
+    (solo_maintainer removes the review instead); for an emergency only.
   EOT
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "ruleset_bypass_integrations" {

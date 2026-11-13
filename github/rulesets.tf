@@ -1,8 +1,8 @@
 # Repository rulesets. GitHub Free has no organization-level rulesets (the endpoint answers 404), so
 # the same two rulesets are created in every repository. Rulesets are free for public repositories.
 
-# Default branch: pull request with code-owner review, signed commits, linear history, no force-push
-# or deletion, required status checks.
+# Default branch: pull request with code-owner review (none with solo_maintainer), signed commits,
+# linear history, no force-push or deletion, required status checks.
 resource "github_repository_ruleset" "default_branch" {
   for_each = local.repositories
 
@@ -46,7 +46,7 @@ resource "github_repository_ruleset" "default_branch" {
 
     pull_request {
       required_approving_review_count   = 0
-      require_code_owner_review         = true
+      require_code_owner_review         = !var.solo_maintainer
       dismiss_stale_reviews_on_push     = true
       require_last_push_approval        = false
       required_review_thread_resolution = true
