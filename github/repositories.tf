@@ -5,6 +5,7 @@ resource "github_repository" "this" {
   description  = each.value.description
   visibility   = "public"
   is_template  = try(each.value.is_template, false)
+  auto_init    = try(each.value.auto_init, false)
   homepage_url = null
 
   has_issues      = true
@@ -46,7 +47,7 @@ resource "github_repository" "this" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [template]
+    ignore_changes  = [template, auto_init]
   }
 }
 
