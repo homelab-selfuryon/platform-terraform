@@ -48,6 +48,15 @@ locals {
       kind        = "platform"
       tier        = "tier-1"
     }
+    "catalog" = {
+      description = "Teams and apps of the org in CUE, the source of truth the other repositories are generated from"
+      team        = "platform"
+      kind        = "platform"
+      tier        = "tier-1"
+      # Not generated from a template: GitHub's first commit gives the ruleset-protected default
+      # branch something to open pull requests against.
+      auto_init = true
+    }
     "rust-app-template" = {
       description = "Template for a Rust app on the platform"
       team        = "platform"
