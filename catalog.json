@@ -1,16 +1,10 @@
 {
   "teams": {
     "notes": {
-      "description": "Product team behind the example apps notes-api and notes-stats",
-      "github": {
-        "permission": "maintain"
-      }
+      "description": "Product team behind the example apps notes-api and notes-stats"
     },
     "platform": {
-      "description": "Platform team: clusters, platform components, paved road, org configuration",
-      "github": {
-        "permission": "admin"
-      }
+      "description": "Platform team: clusters, platform components, paved road, org configuration"
     }
   },
   "apps": {
