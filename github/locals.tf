@@ -5,8 +5,15 @@ locals {
   teams = {
     for name, t in local.catalog.teams : name => {
       description = t.description
-      permission  = t.github.permission
+      permission  = lookup(local.team_permissions, name, local.team_permission_default)
     }
+  }
+
+  # What a team may do on the repositories it owns: GitHub's business, not the catalog's. Every team
+  # gets the default; a team that needs another permission is listed here.
+  team_permission_default = "maintain"
+  team_permissions = {
+    platform = "admin"
   }
   apps = local.catalog.apps
 
@@ -107,13 +114,16 @@ locals {
     "notes-stats",
   ])
 
-  # App repositories get the `staging` and `prod` GitHub Environments.
+  # An app repository gets a GitHub Environment for each of `staging` and `prod` that the app has
+  # in the catalog (`envs`); `preview` is per pull request and has none.
   environments = ["staging", "prod"]
 
-  environment_pairs = {
-    for pair in setproduct(keys(local.app_repositories), local.environments) :
-    "${pair[0]}/${pair[1]}" => { repository = pair[0], environment = pair[1] }
-  }
+  environment_pairs = merge([
+    for app, s in local.apps : {
+      for env in s.envs : "${app}/${env}" => { repository = app, environment = env }
+      if contains(local.environments, env)
+    }
+  ]...)
 
   tier_values      = ["tier-1", "tier-2", "tier-3"]
   lifecycle_values = ["experimental", "active", "deprecated"]
