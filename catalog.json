@@ -52,7 +52,11 @@
       "repo": "homelab-selfuryon/notes-api",
       "tier": "tier-3",
       "lifecycle": "active",
-      "envs": ["preview", "staging", "prod"],
+      "envs": [
+        "preview",
+        "staging",
+        "prod"
+      ],
       "cluster": "alpha-01",
       "preview": true
     },
@@ -63,7 +67,11 @@
       "repo": "homelab-selfuryon/notes-stats",
       "tier": "tier-3",
       "lifecycle": "active",
-      "envs": ["preview", "staging", "prod"],
+      "envs": [
+        "preview",
+        "staging",
+        "prod"
+      ],
       "cluster": "alpha-01",
       "preview": true
     }
