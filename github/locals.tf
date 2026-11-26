@@ -87,6 +87,9 @@ locals {
 
   repositories = merge(local.platform_repositories, local.app_repositories)
 
+  # The catalog repository: every team contributes to it (teams.tf).
+  catalog_repository = "catalog"
+
   # Template that new app repositories are created from.
   template_repository = "rust-app-template"
 
