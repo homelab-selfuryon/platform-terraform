@@ -24,9 +24,9 @@ resource "github_team_repository" "this" {
 }
 
 # Every other team may push branches to `catalog` and open pull requests there: a team changes its own
-# directory (teams/<team>/, one file per app). What it may merge is decided by catalog's CODEOWNERS
-# (its directory: the team; team.cue, schema and everything else: the owning team) together with the
-# default-branch ruleset (meta decisions.md, 2026-11-26).
+# file (teams/<team>.cue: the team and its apps). What it may merge is decided by catalog's CODEOWNERS
+# (its file: the team; schema and everything else: the owning team) together with the default-branch
+# ruleset (meta decisions.md, 2026-11-26).
 resource "github_team_repository" "catalog_contributors" {
   for_each = {
     for name, _ in local.teams : name => name
